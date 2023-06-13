@@ -18,9 +18,8 @@ public class Main {
         CalculatorDataObject dataObject = new CalculatorDataObject();
         Calculator calculator = new Calculator(dataObject);
         System.out.println("+++++++++Start++++++++++");
-        System.out.println("Please Input mathematical operation(+、-、*、/、()、=、undo、redo):");
+        System.out.println("Please Input mathematical operation(+、-、*、/、()、=、undo、redo) or exit:");
         Scanner sc=new Scanner(System.in);
-        StringBuffer sb = new StringBuffer();
         while(sc.hasNext()) {
             String value = sc.next();
             boolean isCalc = false;
@@ -40,22 +39,16 @@ public class Main {
                 isCalc = true;
             }
             if(NumberUtil.supportInputExpression(value)) {
-                sb.append(value.replaceAll("=",""));
-                //dataObject.setExpression(sb.toString());
+                dataObject.setExpression((dataObject.getExpression()==null ? "":dataObject.getExpression()) + value.replaceAll("=",""));
+                ExtendCalcUtil.resetInputExpression(dataObject);
             }
-            System.out.println("表达式为： "+sb.toString());
+            System.out.println("表达式为： "+dataObject.getExpression());
             if(isCalc) {//计算结果，同时清除表达式
-                //value = value.replace("=","");
-                dataObject.setExpression(sb.toString());
                 inputCalc(calculator,dataObject,true);
             }
         }
-        dataObject.setExpression(sb.toString());
         ExtendCalcUtil.resetInputExpression(dataObject);
         calculator.mathCalc();
-//        int a= sc.nextInt();
-//        int b= sc.nextInt();
-//        System.out.println("a="+a+"  b="+b);
         System.out.println("+++++++++End++++++++++");
     }
 

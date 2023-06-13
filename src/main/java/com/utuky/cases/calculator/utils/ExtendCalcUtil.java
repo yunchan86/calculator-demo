@@ -12,6 +12,9 @@ public class ExtendCalcUtil {
 
     public static void undo(CalculatorDataObject dataObject,String currentInput) {
         if(currentInput.equalsIgnoreCase(SymbolEnums.UNDO.getSymbol())) {
+            if(dataObject.getExpression()==null) {
+                return;
+            }
             int length = dataObject.getExpression().length();
             if(length>0){
                 String newExpression = dataObject.getExpression().substring(0,length-1);
@@ -21,6 +24,10 @@ public class ExtendCalcUtil {
     }
 
     public static void redo(CalculatorDataObject dataObject,String currentInput) {
+        if(dataObject.getInputExpression()==null ||
+                dataObject.getExpression()==null) {
+            return;
+        }
         if(dataObject.getInputExpression().indexOf(dataObject.getExpression())!=-1
             && currentInput.equalsIgnoreCase(SymbolEnums.REDO.getSymbol())) {
             int length = dataObject.getExpression().length();
@@ -35,7 +42,8 @@ public class ExtendCalcUtil {
     }
 
     public static void resetInputExpression(CalculatorDataObject dataObject) {
-        if(dataObject.getInputExpression().indexOf(dataObject.getExpression())==-1) {
+        if(dataObject.getInputExpression() == null
+            || dataObject.getInputExpression().indexOf(dataObject.getExpression())==-1) {
             dataObject.setInputExpression(dataObject.getExpression());
         }
     }
