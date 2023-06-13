@@ -1,5 +1,7 @@
 package com.utuky.cases.calculator.utils;
 
+import com.utuky.cases.calculator.operator.SymbolEnums;
+
 /**
  * @description:
  * @author: chenhuangyun
@@ -80,5 +82,37 @@ public class NumberUtil {
 
         }
         return result;
+    }
+
+    public static boolean supportInput(String input) {
+        if(input != null && !input.equalsIgnoreCase("")) {
+            if(input.equalsIgnoreCase(SymbolEnums.REDO.getSymbol())
+             || input.equalsIgnoreCase(SymbolEnums.UNDO.getSymbol())) {
+                return true;
+            }
+            String regx = "0123456789.+-*/()=";
+            int length = input.length();
+            for(int i=0;i<length;i++) {
+                if(regx.indexOf(input.charAt(i))==-1) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean supportInputExpression(String input) {
+        if(input != null && !input.equalsIgnoreCase("")) {
+            String regx = "0123456789.+-*/()=";
+            int length = input.length();
+            for(int i=0;i<length;i++) {
+                if(regx.indexOf(input.charAt(i))==-1) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

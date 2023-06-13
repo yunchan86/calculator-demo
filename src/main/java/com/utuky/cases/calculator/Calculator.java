@@ -19,7 +19,11 @@ public class Calculator {
     }
 
     public double mathCalc() {
-        CalcUtil.calc(dataObject);
+        CalcUtil.validate(dataObject);
+        if(dataObject.getIndexYN()==0) {
+            CalcUtil.calc(dataObject);
+            return dataObject.getTotal().doubleValue();
+        }
         return -999999999;
     }
 

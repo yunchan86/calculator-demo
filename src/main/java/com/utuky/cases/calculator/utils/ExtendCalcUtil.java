@@ -11,31 +11,32 @@ import com.utuky.cases.calculator.operator.SymbolEnums;
 public class ExtendCalcUtil {
 
     public static void undo(CalculatorDataObject dataObject,String currentInput) {
-        if(dataObject.getInputExpression().lastIndexOf(SymbolEnums.UNDO.getSymbol())!=-1) {
-            int length = dataObject.getInputExpression().length();
-
+        if(currentInput.equalsIgnoreCase(SymbolEnums.UNDO.getSymbol())) {
+            int length = dataObject.getExpression().length();
+            if(length>0){
+                String newExpression = dataObject.getExpression().substring(0,length-1);
+                dataObject.setExpression(newExpression);
+            }
         }
-        //dataObject.getInputExpression().
     }
 
     public static void redo(CalculatorDataObject dataObject,String currentInput) {
-        if(dataObject.getInputExpression().indexOf(dataObject.getExpression())!=-1) {
-            int length = dataObject.getInputExpression().length();
-            String suffixStr = dataObject.getInputExpression().substring(length);
-            int suffixLength = suffixStr.length();
-            char operator = suffixStr.charAt(0);
-            String appand = new String(new char[]{operator});
-            for(int i=1;i<suffixLength;i++) {
-                if(NumberUtil.isOperator(suffixStr.charAt(i))){
-                    break;
-                }else {
-                    appand += new Character(suffixStr.charAt(i)).toString();
-                }
+        if(dataObject.getInputExpression().indexOf(dataObject.getExpression())!=-1
+            && currentInput.equalsIgnoreCase(SymbolEnums.REDO.getSymbol())) {
+            int length = dataObject.getExpression().length();
+            int inputLength = dataObject.getInputExpression().length();
+            if(inputLength>length) {
+                String newExpression = dataObject.getInputExpression().substring(0,length+1);
+                dataObject.setExpression(newExpression);
             }
-            dataObject.setExpression(dataObject.getExpression()+appand);
-            System.out.println(appand);
         }else {
             dataObject.setInputExpression(dataObject.getInputExpression());
+        }
+    }
+
+    public static void resetInputExpression(CalculatorDataObject dataObject) {
+        if(dataObject.getInputExpression().indexOf(dataObject.getExpression())==-1) {
+            dataObject.setInputExpression(dataObject.getExpression());
         }
     }
 }

@@ -105,34 +105,7 @@ public class CalcUtil {
                     CommandCalc commandCalc = operatorEnums.getCommand();
                     res = commandCalc.calc(stack).doubleValue();
                 }
-
-                /*if (indexValue.equals("+")) {
-                    double num2 = Double.parseDouble(stack.pop());
-                    double num1 = Double.parseDouble(stack.pop());
-
-                    res = num1 + num2;
-                } else if (indexValue.equals("-")) {
-                    double num2 = Double.parseDouble(stack.pop());
-                    double num1 = Double.parseDouble(stack.pop());
-                    res = num1 - num2;
-                } else if (indexValue.equals("*")) {
-                    double num2 = Double.parseDouble(stack.pop());
-                    double num1 = Double.parseDouble(stack.pop());
-                    res = num1 * num2;
-                } else if (indexValue.equals("/")) {
-                    double num2 = Double.parseDouble(stack.pop());
-                    double num1 = Double.parseDouble(stack.pop());
-                    if (num2 != 0){
-                        res = num1 / num2;
-                    } else {
-                        System.err.println("除数不能为0");
-                        dataObject.setIndexYN(1);
-                    }
-                } else if (indexValue.equals("^")) {
-                    double num2 = Double.parseDouble(stack.pop());
-                    double num1 = Double.parseDouble(stack.pop());
-                    res = Math.pow(num1, num2);
-                } else */if (calcList.get(i).equals("!")) {
+                if (calcList.get(i).equals("!")) {
                     double num1 = Double.parseDouble(stack.pop());
                     if (num1 == 0 || num1 == 1){
                         res = 1;
@@ -232,6 +205,144 @@ public class CalcUtil {
         } else {
             System.err.println("输入错误！括号不匹配");
             dataObject.setIndexYN(1);
+        }
+    }
+
+    /**
+     * 校验表达式，判断输入是否错误
+     * @param dataObject
+     */
+    public static void validate(CalculatorDataObject dataObject){
+        String str = dataObject.getExpression();
+        int i = 0;
+        if (str.length() == 0){
+        }
+        if (str.length() == 1){
+            //当只有一位字符时，只能是“0123456789ep”中的一个
+            if ("0123456789ep".indexOf(str.charAt(0)) == -1){
+                System.err.println("输入错误！");
+                dataObject.setIndexYN(1);
+            }
+        }
+        if (str.length() > 1){
+            for (i = 0; i < str.length() - 1; i++) {
+                //1.第一个字符只能为"losctg(0123456789ep"中的一个
+                if ("losctg(0123456789ep".indexOf(str.charAt(0)) == -1){
+                    System.err.println("输入错误！");
+                    dataObject.setIndexYN(1);
+                }
+                //2.“+-*/”后面只能是"0123456789losctg(ep"中的一个
+                if ("+-*/".indexOf(str.charAt(i)) >= 0 && "0123456789losctg(ep".indexOf(str.charAt(i + 1)) == -1){
+                    System.err.println("输入错误！");
+                    dataObject.setIndexYN(1);
+                }
+                //3."."后面只能是“0123456789”中的一个
+                if (str.charAt(i) == '.' && "0123456789".indexOf(str.charAt(i + 1)) == -1){
+                    System.err.println("输入错误！");
+                    dataObject.setIndexYN(1);
+                }
+                //4."!"后面只能是“+-*/^)”中的一个
+                if (str.charAt(i) == '!' && "+-*/^)".indexOf(str.charAt(i + 1)) == -1){
+                    System.err.println("输入错误！");
+                    dataObject.setIndexYN(1);
+                }
+                //5."losctg"后面只能是“0123456789(ep”中的一个
+                if ("losctg".indexOf(str.charAt(i)) >= 0 && "0123456789(ep".indexOf(str.charAt(i + 1)) == -1){
+                    System.err.println("输入错误！");
+                    dataObject.setIndexYN(1);
+                }
+                //6."0"的判断操作
+                if (str.charAt(0) == '0' && str.charAt(1) == '0'){
+                    System.err.println("输入错误！");
+                    dataObject.setIndexYN(1);
+                }
+                if (i >= 1 && str.charAt(i) == '0'){
+                    //&& str.charAt(0) == '0' && str.charAt(1) == '0'
+                    int m = i;
+                    int n = i;
+                    int is = 0;
+                    //1.当0的上一个字符不为"0123456789."时，后一位只能是“+-*/.!^)”中的一个
+                    if ("0123456789.".indexOf(str.charAt(m - 1)) == -1 && "+-*/.!^)".indexOf(str.charAt(i + 1)) == -1){
+                        System.err.println("输入错误！");
+                        dataObject.setIndexYN(1);
+                    }
+                    //2.如果0的上一位为“.”,则后一位只能是“0123456789+-*/.^)”中的一个
+                    if (str.charAt(m - 1) == '.' && "0123456789+-*/.^)".indexOf(str.charAt(i + 1)) == -1){
+                        System.err.println("输入错误！");
+                        dataObject.setIndexYN(1);
+                    }
+                    n -= 1;
+                    while (n > 0){
+                        if ("(+-*/^glosct".indexOf(str.charAt(n)) >= 0){
+                            break;
+                        }
+                        if (str.charAt(n) == '.'){
+                            is++;
+                        }
+                        n--;
+                    }
+
+                    //3.如果0到上一个运算符之间没有“.”的话，整数位第一个只能是“123456789”，
+                    //  且后一位只能是“0123456789+-*/.!^)”中的一个。
+                    if ((is == 0 && str.charAt(n) == '0') || "0123456789+-*/.!^)".indexOf(str.charAt(i + 1)) == -1){
+                        System.err.println("输入错误！");
+                        dataObject.setIndexYN(1);
+                    }
+                    //4.如果0到上一个运算符之间有一个“.”的话,则后一位只能是“0123456789+-*/.^)”中的一个
+                    if (is == 1 && "0123456789+-*/.^)".indexOf(str.charAt(i + 1)) == -1){
+                        System.err.println("输入错误！");
+                        dataObject.setIndexYN(1);
+                    }
+                    if (is > 1){
+                        System.err.println("输入错误！");
+                        dataObject.setIndexYN(1);
+                    }
+
+                }
+                //7."123456789"后面只能是“0123456789+-*/.!^)”中的一个
+                if ("123456789".indexOf(str.charAt(i)) >= 0 && "0123456789+-*/.!^)".indexOf(str.charAt(i + 1)) == -1){
+                    System.err.println("输入错误！");
+                    dataObject.setIndexYN(1);
+                }
+                //8."("后面只能是“0123456789locstg()ep”中的一个
+                if (str.charAt(i) == '(' && "0123456789locstg()ep".indexOf(str.charAt(i + 1)) == -1){
+                    System.err.println("输入错误！");
+                    dataObject.setIndexYN(1);
+                }
+                //9.")"后面只能是“+-*/!^)”中的一个
+                if (str.charAt(i) == ')' && "+-*/!^)".indexOf(str.charAt(i + 1)) == -1){
+                    System.err.println("输入错误！");
+                    dataObject.setIndexYN(1);
+                }
+                //10.最后一位字符只能是“0123456789!)ep”中的一个
+                if ("0123456789!)ep".indexOf(str.charAt(str.length() - 1)) == -1){
+                    System.err.println("输入错误！");
+                    dataObject.setIndexYN(1);
+                }
+                //12.不能有多个“.”
+                if (i > 2 && str.charAt(i) == '.'){
+                    int n = i - 1;
+                    int is = 0;
+                    while (n > 0){
+                        if ("(+-*/^glosct".indexOf(str.charAt(n)) >= 0){
+                            break;
+                        }
+                        if (str.charAt(n) == '.'){
+                            is++;
+                        }
+                        n--;
+                    }
+                    if (is > 0){
+                        System.err.println("输入错误！");
+                        dataObject.setIndexYN(1);
+                    }
+                }
+                //13."ep"后面只能是“+-*/^)”中的一个
+                if ("ep".indexOf(str.charAt(i)) >= 0 && "+-*/^)".indexOf(str.charAt(i + 1)) == -1){
+                    System.err.println("输入错误！");
+                    dataObject.setIndexYN(1);
+                }
+            }
         }
     }
 }
